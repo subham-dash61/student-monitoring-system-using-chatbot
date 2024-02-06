@@ -1,0 +1,89 @@
+{% load  static%}
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<title>Voidmain</title>
+<link rel="stylesheet" type="text/css" href="{% static 'style/style.css'%}" title="style" />
+
+    <style>
+        .button {
+          background-color: #f44336; /* Red */
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+        }
+        /* New styles for positioning the chat button */
+.chat-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+    </style>
+</head>
+
+<body>
+	<div id="main">
+		<div id="header">
+			<div id="logo">
+				<div id="logo_text" align="center">
+					<!-- class="logo_colour", allows you to change the colour of the text -->
+					<h3>
+						<a href="#"><font color="white">College Chatbot</font></a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					</h3>
+					<br/><br/>
+				</div>
+			</div>
+			<div id="menubar">
+				<ul id="menu">
+
+                    <li><a href="/viewattendance">View Attendance</a></li>
+                    <li><a href="/viewstudentpercentageaction">Percentage</a>
+                    <li><a href="/viewinternshipaction/">Internships</a></li>
+					<li><a href="/logout">Logout</a></li>
+
+				</ul>
+			</div>
+		</div>
+		<div id="content_header"></div>
+		<div id="site_content">
+			<div id="content">
+				<h1>{{message}}</h1>
+				<form name="form" action="/viewstudentpercentageaction">
+
+					<div class="form_settings">
+
+                        <table id="customers">
+                          <tr>
+                              <th>Roll Number</th>
+                              <th>Percentage</th>
+                          </tr>
+                            {% for key,val in percentage.items %}
+                                <tr>
+                                    <td>{{ key }}</td>
+                                    <td>{{ val }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+					</div>
+				</form>
+			</div>
+		</div>
+        <div class="chat-button-container">
+            <a href="/chat">
+              <button class="button button2">Chat</button>
+            </a>
+          </div>
+	</div>
+</body>
+</html>

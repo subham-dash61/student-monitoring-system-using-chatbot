@@ -1,0 +1,193 @@
+{% load  static%}
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<title>Voidmain</title>
+<link rel="stylesheet" type="text/css" href="{% static 'style/style.css'%}" title="style" />
+    <style>
+        .button {
+          background-color: #f44336; /* Red */
+          border: none;
+          color: white;
+          padding: 15px 32px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+        }
+
+        /* Add margin to create space between content and form */
+        #form-container {
+  display: flex; /* Use flexbox for the form container */
+  justify-content: space-between; /* Distribute items along the horizontal axis */
+  align-items: center; /* Center items vertically within the container */
+  margin-top: 130px; /* Adjust this value as needed */
+}
+.chat-button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+      <script>
+        //webkitSpeechRecognition api for speech to text conversion
+        function record(){
+            var recognition = new webkitSpeechRecognition();
+            recognition.lang='en-IN';
+
+            recognition.onresult = function(event){
+                console.log(event)
+                document.getElementById('textInput').value = event.results[0][0].transcript;
+            }
+            recognition.start();
+         }
+      </script>
+
+</head>
+
+<body>
+	<div id="main">
+		<div id="header">
+			<div id="logo">
+				<div id="logo_text" align="center">
+					<!-- class="logo_colour", allows you to change the colour of the text -->
+					<h3>
+						<a href="#"><font color="white">College Chatbot</font></a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+					</h3>
+					<br/><br/>
+				</div>
+			</div>
+			<div id="menubar">
+				<ul id="menu">
+                    {% if request.session.role in "faculty" %}
+                         <li><a href="/addattendance/">Add Attendance</a></li>
+                         <li><a href="/addmarks">Upload Marks</a>
+                        <li><a href="/viewpercentage">Percentage</a></li>
+                        <li><a href="/viewstudentpercentage">Student Percentage</a></li>
+                        <li><a href="/addinternship/">Add Internship</a></li>
+                        <li><a href="/viewinternship/">Internships</a></li>
+                        <li><a href="/viewattendance">View Attendance</a></li>
+                    {% endif %}
+
+                    {% if request.session.role in "student" %}
+                        <li><a href="/viewattendance">View Attendance</a></li>
+                         <li><a href="/viewstudentpercentageaction">Percentage</a></li>
+                         <li><a href="/viewinternshipaction/">Internships</a></li>
+                    {% endif %}
+
+                    {% if request.session.role in "admin" %}
+                        <li><a href="/facultyregistration">Add Faculty</a></li>
+                        <li><a href="/getfacultys">View Faculty</a></li>
+                        <li><a href="/studentregistration">Add Student</a></li>
+                        <li><a href="/getstudents">View Students</a></li>
+                    {% endif %}
+
+					<li><a href="/logout">Logout</a></li>
+
+				</ul>
+			</div>
+		</div>
+		<div id="content_header"></div>
+		<div id="site_content">
+			<div id="content">
+
+				<h1>College Chat bot</h1>
+
+                <p class="botText"><span>Please try typing full sentences as I am still learning!</span></p>
+                <p class="botText"><span>I am a chatbot. You can begin conversation by typing in a message and pressing enter.</span></p>
+                <p class="botText"><span>Hi There! What is your name?</span></p>
+                {{ message }}
+
+
+
+                {% if type in "percentage" %}
+                    <table id="customers">
+                      <tr>
+                          <th>Roll Number</th>
+                          <th>Percentage</th>
+                      </tr>
+                        {% for key,val in percentage.items %}
+                            <tr>
+                                <td>{{ key }}</td>
+                                <td>{{ val }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+                {% if type in "internship" %}
+                    <table id="customers">
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Internship</th>
+                        </tr>
+                        {% for internship in internships %}
+                            <tr>
+                                <td>{{ internship.halticket_number}}</td>
+                                <td>{{ internship.Company_Name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+                {% if type in "marks" %}
+                    <table id="customers">
+                        <tr>
+                            <th>Subject_Code</th>
+                            <th>Subject Name</th>
+                            <th>Internal_Marks</th>
+                            <th>External_Marks</th>
+                            <th>Total</th>
+                            <th>Credits</th>
+                            <th>Actual Marks</th>
+                        </tr>
+
+                        {% for marks in academic_marks %}
+                            <tr>
+                                <td>{{ marks.Subject_Code}}</td>
+                                <td>{{ marks.Subject_Name }}</td>
+
+<td>{{ marks.Internal_Marks}}</td>
+                                <td>{{ marks.ExterNal_Marks }}</td>
+                                <td>{{ marks.Total}}</td>
+                                <td>{{ marks.Credits }}</td>
+                                <td>{{ marks.actualmarks }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+
+
+
+                <div id="form-container">
+                    <form name="form" action="/get">
+                      {% csrf_token %}
+                      <div class="form_settings">
+                        <div style="display: flex; align-items: center;"> <!-- Use flexbox for alignment -->
+                          <span>Enter Query :</span>
+                          <input class="contact" type="text" name="msg" value="" required id="textInput" />
+                          <button type="button" name="button" class="mic" onclick="record()">
+                            <img src="{% static 'mic3.png'%}" height="32px" width="38px" />
+                          </button>
+                         <input class="submit" type="submit" name="contact_submitted" value="Submit" />
+                        </div>
+
+                      </div>
+                    </form>
+                  </div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>
